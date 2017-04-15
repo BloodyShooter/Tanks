@@ -1,6 +1,7 @@
 package org.gvozdetscky.game;
 
 import org.gvozdetscky.display.Display;
+import org.gvozdetscky.game.level.Level;
 import org.gvozdetscky.graphics.Sprite;
 import org.gvozdetscky.graphics.SpriteSheet;
 import org.gvozdetscky.graphics.TextureAtlas;
@@ -33,6 +34,7 @@ public class Game implements Runnable {
     private Input input;
     private TextureAtlas atlas;
     private Player player;
+    private Level lvl;
 
     public Game() {
         running = false;
@@ -42,6 +44,7 @@ public class Game implements Runnable {
         Display.addInputListener(input);
         atlas = new TextureAtlas(ATLAS_FILE_NAME);
         player = new Player(300, 300, 2, 3, atlas);
+        lvl = new Level(atlas);
     }
 
     public synchronized void start() {
@@ -70,10 +73,12 @@ public class Game implements Runnable {
 
     private void update() {
         player.update(input);
+        lvl.update();
     }
 
     private void render() {
         Display.clear();
+        lvl.render(graphics);
         player.render(graphics);
         Display.swapBuffer();
     }
