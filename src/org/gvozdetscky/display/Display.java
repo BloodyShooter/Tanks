@@ -1,11 +1,15 @@
 package org.gvozdetscky.display;
 
+import org.gvozdetscky.io.Input;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
+
+import static java.awt.SystemColor.window;
 
 /**
  * Created by Egor on 14.04.2017.
@@ -74,5 +78,9 @@ public abstract class Display {
 
     public static void setTitle(String title) {
         window.setTitle(title);
+    }
+
+    public static void addInputListener(Input inputListener) {
+        window.add(inputListener);
     }
 }
