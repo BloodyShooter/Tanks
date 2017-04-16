@@ -2,10 +2,11 @@ package org.gvozdetscky.game.level;
 
 import org.gvozdetscky.game.Game;
 import org.gvozdetscky.graphics.TextureAtlas;
+import org.gvozdetscky.utils.Utils;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by Egor on 15.04.2017.
@@ -18,8 +19,9 @@ public class Level {
     public static final int TILES_IN_WIDTH = Game.WIDTH / SCALED_TILE_SIZE;
     public static final int TILES_IN_HEIGHT = Game.HEIGHT / SCALED_TILE_SIZE;
 
-    private int[][] tileMap;
+    private Integer[][] tileMap;
     private Map<TileType, Tile> tiles = new HashMap<>();
+    private List<Point> grassCords;
 
     public Level(TextureAtlas atlas) {
         tiles = new HashMap<>();
@@ -35,6 +37,15 @@ public class Level {
                 TILE_IN_GAME_SCALE, TileType.ICE));
         tiles.put(TileType.EMPTY, new Tile(atlas.cut(36 * TILE_SCALE, 6 * TILE_SCALE, TILE_SCALE, TILE_SCALE),
                 TILE_IN_GAME_SCALE, TileType.EMPTY));
+        tileMap = Utils.levelParser("res/level.lvl");
+        grassCords = new ArrayList<>();
+        for (int i = 0; i < tileMap.length; i++) {
+            for (int j =0; j < tileMap[i].length; j++) {
+                Tile tile = tiles.get(TileType.fromNumeric(tileMap[i][j]));
+                if (tile.getType() == TileType.GRASS)
+                    grassCords.add(new Point(j * SCALED_TILE_SIZE,i * SCALED_TILE_SIZE));
+            }
+        }
     }
 
     public void update() {
@@ -44,8 +55,17 @@ public class Level {
     public void render(Graphics2D graphics2D) {
         for (int i = 0; i < tileMap.length; i++) {
             for (int j = 0; j < tileMap[i].length; j++) {
-                tiles.get(TileType.fromNumeric(tileMap[i][j])).render(graphics2D, j * SCALED_TILE_SIZE, i * SCALED_TILE_SIZE);
+                Tile tile = tiles.get(TileType.fromNumeric(tileMap[i][j]));
+                if (tile.getType() != TileType.GRASS)
+                    tiles.get(TileType.fromNumeric(tileMap[i][j])).render(graphics2D, j * SCALED_TILE_SIZE,
+                            i * SCALED_TILE_SIZE);
             }
+        }
+    }
+
+    public void renderGrass(Graphics2D graphics2D) {
+        for (Point point: grassCords) {
+            tiles.get(TileType.GRASS).render(graphics2D, point.x, point.y);
         }
     }
 }
